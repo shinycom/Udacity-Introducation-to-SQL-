@@ -1,0 +1,40 @@
+Question 2. For the region with the largest (sum) of sales total_amt_usd, how many total (count) orders were placed?
+
+step 1. join 3 tables sales_reps, accounts and orders.
+step 2. find out which region has the most sum(total_amt_usd) and it turns out region_id = 1 has the most orders placed. 
+
+select t1.region_id
+from(
+select s.region_id, sum(o.total_amt_usd)
+from sales_reps s
+join accounts a
+on s.id = a.sales_rep_id
+join orders o
+on a.id = o.account_id
+group by 1
+order by sum desc
+limit 1) t1
+
+step3. join 4 tables and using where clause to filter out orders that region_id equals the result from step 2.  In a form of where region_id = (subsql from step 2)
+
+select r.name, count(o.account_id)
+from sales_reps s
+join accounts a
+on s.id = a.sales_rep_id
+join orders o
+on a.id = o.account_id
+join region r
+on r.id = s.region_id
+where r.id = (
+  select t1.region_id
+  from(
+  select s.region_id, sum(o.total_amt_usd)
+  from sales_reps s
+  join accounts a
+  on s.id = a.sales_rep_id
+  join orders o
+  on a.id = o.account_id
+  group by 1
+  order by sum desc
+  limit 1) t1 )
+  group by 1
