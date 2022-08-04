@@ -1,0 +1,35 @@
+Q3. How many accounts had more total purchases than the account name which has bought the most standard_qty paper throughout their lifetime as a customer?
+
+select account_id, sum(standard_qty)
+from orders
+group by account_id
+order by 2 desc
+limit 1
+
+
+select o.account_id, 
+	   a.name,
+	   sum(o.standard_qty) as sum_standard,
+       sum(o.total) as sum_total
+from orders o
+join accounts a
+on a.id = o.account_id
+group by 1,2
+order by sum_standard desc
+
+
+select a.name
+from accounts a
+join orders o
+on a.id = o.account_id
+group by 1
+having sum(o.total) > (select qty from(
+
+select a.name, sum(o.standard_qty) as qty, 
+	   sum(o.total) as total
+from orders o
+join accounts a
+on o.account_id = a.id
+group by 1
+order by 2 desc
+limit 1) t1)
