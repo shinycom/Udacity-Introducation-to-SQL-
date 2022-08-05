@@ -1,0 +1,24 @@
+Q6. What is the lifetime average amount spent in terms of total_amt_usd, including only the companies that spent more per order, on average, than the average of all orders?
+
+
+firgure out the average of all the accounts, it turns out avg_all is 3348.0196513310185185, please see below
+select avg(o.total_amt_usd)
+from orders o
+  
+choosing those accounts avg(o.total_amt_usd) > average of all the accounts (3348.0196513310185185)
+select o.account_id, avg(o.total_amt_usd) avg_single
+from orders o
+group by 1 
+having avg(o.total_amt_usd) > (
+    select avg(total_amt_usd) avg_all
+    from orders)
+
+last step, avg of those chosen accounts
+select avg(avg_single)
+from(
+    select o.account_id, avg(o.total_amt_usd) avg_single
+    from orders o
+    group by 1
+    having avg(o.total_amt_usd) > (  
+      select avg(total_amt_usd) avg_all
+      from orders)) t1
