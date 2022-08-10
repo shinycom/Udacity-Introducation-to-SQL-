@@ -26,3 +26,30 @@ from t1
 where category_name in ('Animation', 'Children', 'Classics', 'Comedy', 'Family', 'Music')
 group by 1, 2
 order by 2, 1
+
+
+
+
+with t1 as(
+    select f.title film_title, c.name category_name, r.rental_id rental
+    from film f
+    join film_category fc
+    on f.film_id = fc.film_id
+    join category c
+    on fc.category_id = c.category_id
+    join inventory i
+    on f.film_id = i.film_id
+    join rental r
+    on i.inventory_id = r.inventory_id),
+
+t2 as(
+    select film_title, category_name, count(rental)
+    from t1
+    where category_name in ('Animation', 'Children', 'Classics', 'Comedy', 'Family', 'Music')
+    group by 1, 2
+    order by 2, 1)
+
+select category_name, sum(count)
+from t2
+group by 1
+order by 2 desc
