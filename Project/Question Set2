@@ -7,9 +7,13 @@ We want to find out how the two stores compare in their count of rental orders d
 
 For this query, you will need table rental and customer.
 
-select extract(month from r.rental_date) rental_month, extract(year from r.rental_date) as rental_year, s.store_id, count(rental_id) as count_rentals
-from rental r
-join staff s
-on r.staff_id = s.staff_id
-group by 1, 2, 3
-order by 2
+with temp as(
+  select extract(month from r.rental_date) rental_month, extract(year from r.rental_date) as rental_year, s.store_id, count(rental_id) as count_rentals
+  from rental r
+  join staff s
+  on r.staff_id = s.staff_id
+  group by 1, 2, 3
+  order by 2, 1, 3
+)
+select concat(rental_year, '-' ,rental_month) as date, store_id, count_rentals
+from temp
