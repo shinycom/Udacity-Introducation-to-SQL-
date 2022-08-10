@@ -92,3 +92,4 @@ select category_name, standard_quartile, count(film_title)
 from t1
 group by 1, 2
 order by 1, 2
+
